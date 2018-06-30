@@ -77,6 +77,7 @@ func (a *RatingSIDMultiAnswer) Save() error {
 	return err
 }
 
+// ValidAnswers - checks if provided ids are correct with multiple_choice_answers records
 func ValidAnswers(answerIDs []int) bool {
 	var validAnswers = true
 	var id string
