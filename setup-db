@@ -1,0 +1,56 @@
+#!/bin/bash
+
+sql=$(cat <<EOF
+CREATE TABLE IF NOT EXISTS public.user (
+    id SERIAL NOT NULL PRIMARY KEY,
+    uid varchar(255) NOT NULL,
+    name varchar(255) NOT NULL,
+    email varchar(255) NOT NULL,
+    date_created TIMESTAMPTZ NOT NULL,
+    admin BOOLEAN NOT NULL,
+	CONSTRAINT user_email_key UNIQUE (email),
+    CONSTRAINT user_uid_key UNIQUE (uid)
+);
+
+CREATE TABLE IF NOT EXISTS public.session (
+    id varchar(255) NOT NULL PRIMARY KEY,
+    uid varchar(255) REFERENCES public.user (uid) NOT NULL,
+    public BOOLEAN NOT NULL,
+    date_created TIMESTAMPTZ NOT NULL
+);
+
+CREATE TYPE survey_answer_type AS ENUM ('scale', 'binary',
+     'multiple-choice-freetext');
+
+create table survey_questions
+(
+	question varchar(256),
+	date_added timestamp,
+	id serial not null
+		constraint survey_questions_pkey
+			primary key,
+     answer_type survey_answer_type NOT NULL DEFAULT 'scale',
+     onetime BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+
+create table survey_question_ratings
+(
+	id serial not null
+		constraint questions_pkey
+			primary key,
+	sid varchar(30),
+	uid varchar(20) REFERENCES "user" (uid),
+	questionid integer not null
+		constraint question_ratings_survey_questions_id_fk
+			references survey_questions,
+	date_modified timestamp,
+	rating integer,
+    answer_type survey_answer_type NOT NULL DEFAULT 'scale'
+);
+EOF
+)
+
+echo "Setting up the 'test' database..."
+PGPASSWORD=password createdb -h localhost -U postgres test
+PGPASSWORD=password psql -h localhost -U postgres test -c "$sql"
