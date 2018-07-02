@@ -80,8 +80,8 @@ func TestPostSurveyQuestionAnswer(t *testing.T) {
 			VALUES ('testSID', 'testUID', FALSE, NOW());
 
 		INSERT INTO public.survey_question_ratings
-			(id, sid, uid, questionid, date_modified, rating, answer_type)
-			VALUES (1, 'testSID', 'testUID', 1, NOW(), 3, 'scale');
+			(id, sid, uid, questionid, date_modified, rating, answer_type, freetext, answer_ids)
+			VALUES (1, 'testSID', 'testUID', 1, NOW(), 3, 'scale', 'a', '{}');
 		END;`
 
 	if _, err := dbhandler.GetDatabase().Exec(sqlQuery); err != nil {
@@ -201,8 +201,8 @@ func TestPostSurveyQuestionMultiAnswer(t *testing.T) {
 			VALUES ('testSID', 'testUID', FALSE, NOW());
 
 		INSERT INTO public.survey_question_ratings
-			(id, sid, uid, questionid, date_modified, rating, answer_type)
-			VALUES (1, 'testSID', 'testUID', 1, NOW(), 3, 'multiple-choice-freetext');
+			(id, sid, uid, questionid, date_modified, rating, answer_type, freetext, answer_ids)
+			VALUES (1, 'testSID', 'testUID', 1, NOW(), 3, 'multiple-choice-freetext', 'red text', '{1}' );
 
         INSERT INTO public.multiple_choice_answers (id, category, name)
 			VALUES (1, 'cars', 'Best car');

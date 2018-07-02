@@ -37,14 +37,14 @@ type RatingSIDAnswer struct {
 // Save Saves the RatingSIDAnswer.
 func (a *RatingSIDAnswer) Save() error {
 	sqlQuery := `INSERT INTO survey_question_ratings (sid, uid, date_modified,
-		 questionid, rating, answer_type) VALUES ($1, $2, CURRENT_TIMESTAMP,
-		$3, $4, $5)
+		 questionid, rating, answer_type, freetext, answer_ids) VALUES ($1, $2, CURRENT_TIMESTAMP,
+		$3, $4, $5, $6, $7)
 	ON CONFLICT (id) DO UPDATE
 		SET (sid, uid, date_modified, questionid, rating, answer_type) =
 			($1, $2, CURRENT_TIMESTAMP, $3, $4, $5)`
 
 	_, err := dbhandler.GetDatabase().Exec(sqlQuery,
-		a.SID, a.UID, a.QuestionID, a.Rating, a.AnswerType)
+		a.SID, a.UID, a.QuestionID, a.Rating, a.AnswerType, "", "{}")
 	return err
 }
 
@@ -66,13 +66,6 @@ func (a *RatingSIDMultiAnswer) Save() error {
 
 	_, err := dbhandler.GetDatabase().Exec(sqlQuery,
 		a.SID, a.UID, a.QuestionID, "multiple-choice-freetext", a.Freetext, pq.Array(a.Answers))
-
-	//fmt.Println(a.SID)
-	//fmt.Println(a.UID)
-	//fmt.Println(a.QuestionID)
-	//fmt.Println(a.Freetext)
-	//fmt.Println(a.Answers)
-	//fmt.Println(a.AnswerType)
 
 	return err
 }
